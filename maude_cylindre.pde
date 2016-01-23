@@ -70,12 +70,14 @@ void toGcode(PImage _img) {
 
 
 	//g code generation
-	float stepSize = 0.33; //
-	println("Img width = "+img.width+" / StepSize ="+stepSize);
+	float pixelSkip = 3; // skips some pixel in order to "makeup for the vbit angle (bad reason)
+	println("Img width = "+img.width+" / PixelSkip ="+pixelSkip);
 	//decoder chaque pixel par row
 	float lastLuma = -2;
-	for (int j = 0; j < img.height; j += 3) {
+	for (int j = 0; j < img.height; j += pixelSkip) {
 		for (int i = 0; i < img.width; i++) {
+
+			//some luma checking, doesn't write a new line if the luma is the same
 			float luma = map(brightness(img.get(i, j)), 0, 255, 0, mecheDepth);
 			if (lastLuma != luma) {
 
@@ -84,6 +86,8 @@ void toGcode(PImage _img) {
 				g("G01X"+map(i,0,img.width,0,xOut)+"Z"+-luma);
 				lastLuma = luma;
 			}
+
+			//stop the gcode line if we're out of the image.
 			if (i == img.width-1 || i == 0) {
 				g("G01X"+map(i,0,img.width,0,xOut)+"Z"+-luma);
 			}
