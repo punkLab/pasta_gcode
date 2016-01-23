@@ -3,8 +3,8 @@ import processing.pdf.*;
 PrintWriter file; //used for g-code
 PImage img; //sed for pdf
 
-float xOut = 114; // dimension (in mm or inch) for your OUTPUT 
-float yOut = 118; // same
+float xOut = 250; // dimension (in mm or inch) for your OUTPUT 
+float yOut = 250; // same
 float mecheSize = 0.5; //width of your cnc tool
 float mecheDepth = 0.5; //the deepest your tool will ever go
 
