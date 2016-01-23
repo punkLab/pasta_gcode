@@ -1,45 +1,65 @@
 import processing.pdf.*;
 
-PrintWriter file;
-PImage img;
+PrintWriter file; //used for g-code
+PImage img; //sed for pdf
 
-float xOut = 114; //inch
-float yOut = 118; //mm
-float mecheSize = 0.5;
-float mecheDepth = 0.5;
+float xOut = 114; // dimension (in mm or inch) for your OUTPUT 
+float yOut = 118; // same
+float mecheSize = 0.5; //width of your cnc tool
+float mecheDepth = 0.5; //the deepest your tool will ever go
 
-float radius;
-float speed = 1000;
+float radius; 
+float speed = 1000; //cutting speed <- WATCHOUT FOR THIS AN EXPERIMENT WITH MATERIAL
 
-boolean lineActive = true;
+boolean lineActive = true; 
 
 
 void setup() {
-	size(1920,1080, PDF, "pdf_test.pdf");
-	//background(255);
-	file = createWriter("cDec.nc");
-	img = loadImage("chato.png");
+	////////////////////////////
+	//if you're using cgode, size doesn't matter.
+	//if you're using for line, the last string is the outputted file, and size matters
+	////////////////////////////
+	
+	size(1920,1080);
+	//size(1920,1080, PDF, "pdf_test.pdf");
+	
+	file = createWriter("output.nc"); //the writer is actually the gcode file, name this like you want
+	img = loadImage("chato.png"); // the image you want converted
 
 }
 
 void draw() {
-	//toGcode(img);
-	toPDF(img);
+
+	///////////////////////////
+	//MAIN FUNCTIONS
+	///////////////////////////
+
+	//toGcode(img); //transforms into gcode
+	toPDF(img); // transforms into lines
+	
+
+
+
 	//la for loop pour x axis
 	// for (float i = 0; i < totalWidth; i += mecheSize) {
 	// 	g("G01A360.0");
 	// 	file.println("G01X"+mecheSize);
 	// }
+
 	file.flush();
 	file.close();
 	exit();
 }
 
+//utility function to make the gcode writing clearer
 void g(String _s) {
 	file.println(_s);
 }
 
 void toGcode(PImage _img) {
+
+	//this first part is the g-code header,
+	//make sure this fits with that you need
 	g("%");
 	g("90"); //absolu
 	//g("G91"); //incrementiel
@@ -47,7 +67,10 @@ void toGcode(PImage _img) {
 	//g("G20"); //inch
 	g("M03"); //spindle
 	file.println("F"+speed);
-	float stepSize = 0.33;
+
+
+	//g code generation
+	float stepSize = 0.33; //
 	println("Img width = "+img.width+" / StepSize ="+stepSize);
 	//decoder chaque pixel par row
 	float lastLuma = -2;
